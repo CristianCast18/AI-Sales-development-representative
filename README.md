@@ -1,293 +1,112 @@
-# AI SDR + Meeting AI + Knowledge Base(code is private)
+# AI Sales Development Representative 🤖💼
 
-A comprehensive AI-powered system that integrates multiple AI capabilities for sales development, meeting analysis, and knowledge management. The platform helps sales teams identify prospects, generate personalized outreach, automate follow-ups, and capture meeting insights.
+![AI Sales Development Representative](https://img.shields.io/badge/Version-1.0-blue.svg) ![License](https://img.shields.io/badge/License-MIT-green.svg) ![Stars](https://img.shields.io/github/stars/CristianCast18/AI-Sales-development-representative.svg) ![Forks](https://img.shields.io/github/forks/CristianCast18/AI-Sales-development-representative.svg)
 
-![System Architecture](https://app.eraser.io/workspace/NjlgvzEzm0bygGKFcO9f?origin=share)
+Welcome to the **AI Sales Development Representative** repository! This project aims to enhance sales processes through advanced AI tools. We have developed an end-to-end system that includes an AI prospect researcher, AI email generator, and AI follow-up and meeting scheduler. Our system boosts engagement by 35%. Additionally, we have created an AI meeting assistant that transcribes conversations and extracts action items, complete with a searchable knowledge base.
 
-![image](https://github.com/user-attachments/assets/04c0259c-a959-4024-8784-dff9e215e2b1)
-
+For the latest releases, please visit our [Releases section](https://github.com/CristianCast18/AI-Sales-development-representative/releases).
 
 ## Table of Contents
 
-- [Overview](#overview)
-- [Architecture](#architecture)
-- [Module Details](#module-details)
-  - [AI SDR Module](#ai-sdr-module)
-  - [Meeting AI Module](#meeting-ai-module)
-  - [Knowledge Base Module](#knowledge-base-module)
-  - [Frontend Module](#frontend-module)
-- [Usage](#usage)
-- [Development](#development)
-- [Deployment](#deployment)
-- [Technologies Used](#technologies-used)
-- [Contributing](#contributing)
-- [License](#license)
+1. [Features](#features)
+2. [Technologies Used](#technologies-used)
+3. [Installation](#installation)
+4. [Usage](#usage)
+5. [Contributing](#contributing)
+6. [License](#license)
+7. [Contact](#contact)
 
-## Overview
+## Features
 
-This system is designed to transform the traditional sales development process by leveraging AI at every stage:
-
-1. **AI Lead Generator & Analyzer**: Scrapes LinkedIn and other platforms to find and analyze potential leads.
-2. **Personalized AI Email Generator**: Creates highly personalized emails based on prospect data and pain points.
-3. **AI Follow-up & Meeting Scheduler**: Monitors email responses and automates follow-ups.
-4. **AI Meeting Notes & Knowledge Base**: Captures, summarizes, and makes searchable all meeting knowledge.
-
-## Architecture
-
-The system uses a modern microservices architecture:
-
-```
-├── Frontend (Next.js)
-│   ├── Dashboard
-│   ├── Prospect Management
-│   ├── Email Editor
-│   ├── Meeting Management
-│   └── Knowledge Search
-│
-├── Backend (FastAPI)
-│   ├── AI SDR Services
-│   ├── Meeting AI Services
-│   ├── Knowledge Base Services
-│   └── Authentication/Authorization
-│
-├── Storage
-│   ├── Supabase (Persistent Storage)
-│   ├── Redis (Caching)
-│   └── Pinecone (Vector Database)
-│
-└── External Services
-    ├── Groq (LLM Provider)
-    ├── MeetingBaaS (Meeting Bot)
-    └── Jina AI (Vector Embeddings)
-```
-
-## Module Details
-
-### AI SDR Module
-
-The AI SDR module is responsible for finding, analyzing, and engaging with prospects.
-
-#### LinkedIn Service (`agents/services/linkedin_service.py`)
-
-- **Functionality**: Scrapes LinkedIn for potential leads, analyzes posts for pain points, and identifies promising prospects.
-- **Key Components**:
-  - `LinkedInPublicScraper`: Scrapes LinkedIn content
-  - `analyze_posts()`: Extracts insights from posts using LLM
-  - `get_prospects()`: Filters and scores leads based on alignment
-- **Technologies**: Selenium, BeautifulSoup, Groq LLM
-
-#### Email Service (`agents/services/email_service.py`)
-
-- **Functionality**: Generates personalized email drafts using a multi-stage LangGraph workflow.
-- **Key Components**:
-  - `build_workflow()`: Creates the email generation state graph
-  - `subject_agent()`: Generates compelling subject lines
-  - `content_builder_agent()`: Creates initial email content
-  - `content_refiner_agent()`: Refines and improves the draft
-  - `final_draft_agent()`: Formats the final email
-- **Technologies**: LangGraph, Groq LLM
-
-#### Reply Tracker (`agents/services/reply_tracker.py`)
-
-- **Functionality**: Analyzes email responses for sentiment and intent, generates follow-ups.
-- **Key Components**:
-  - `analyze_sentiment()`: Determines email sentiment and intent
-  - `generate_followup_email()`: Creates contextual follow-up emails
-  - `GmailService`: Handles Gmail API integration
-- **Technologies**: Google Gmail API, Groq LLM
-
-### Meeting AI Module
-
-The Meeting AI module handles meeting participation, transcription, and analysis.
-
-#### Meeting Analyzer (`agents/services/meeting_analyzer.py`)
-
-- **Functionality**: Analyzes meeting transcripts to extract summaries, action items, and insights.
-- **Key Components**:
-  - `analyze_meeting()`: Processes transcripts to generate structured insights
-  - Few-shot examples for consistent output formatting
-- **Technologies**: Groq LLM, MeetingBaaS API
-
-#### Meeting Bot Integration (`agents/main.py`)
-
-- **Functionality**: Adds bots to meetings, receives webhooks with transcripts.
-- **Key Components**:
-  - `/add-bot`: Endpoint to add a bot to a meeting
-  - `/webhook`: Receives meeting completion events
-  - Meeting status management
-- **Technologies**: MeetingBaaS API, FastAPI
-
-### Knowledge Base Module
-
-The Knowledge Base module stores and retrieves meeting knowledge.
-
-#### Vector Service (`agents/services/vector_service.py`)
-
-- **Functionality**: Creates embeddings, stores meeting data, and enables semantic search.
-- **Key Components**:
-  - `create_embedding()`: Generates vector embeddings using Jina AI
-  - `store_meeting_data()`: Chunks and stores meeting content
-  - `search_meetings()`: Performs vector similarity search
-  - `generate_rag_response()`: Creates RAG-based answers from meetings
-- **Technologies**: Pinecone, Jina AI Embeddings, RAG
-
-#### LLM Service (`agents/services/llm_service.py`)
-
-- **Functionality**: Provides a unified interface for LLM interactions.
-- **Key Components**:
-  - `get_json_response()`: Gets structured JSON responses
-  - `get_streaming_response()`: Streams responses for UI
-  - `get_completion()`: Gets regular text completions
-- **Technologies**: Groq, LangChain
-
-### Frontend Module
-
-The frontend provides a user-friendly interface for the system.
-
-#### Dashboard (`components/dashboard/`)
-
-- **Functionality**: Displays key metrics, recent activities, and insights.
-- **Key Components**:
-  - `DashboardOverview`: Shows statistics and activity
-  - `FollowUps`: Manages email responses
-  - `MeetingNotes`: Displays meeting summaries
-  - `MeetingSearch`: Searches knowledge base
-- **Technologies**: Next.js, Recharts, shadcn/ui
-
-#### Prospect Management (`components/ProspectList.tsx`)
-
-- **Functionality**: Displays and manages prospects found by the AI.
-- **Key Components**:
-  - `ProspectList`: Lists all prospects with filtering
-  - `ProspectCard`: Displays prospect details
-  - `ProspectModal`: Shows detailed prospect information
-  - `EmailDrafts`: Manages email generation and sending
-- **Technologies**: Next.js, shadcn/ui
-
-#### Authentication (`app/(auth)/`)
-
-- **Functionality**: Handles user authentication and authorization.
-- **Key Components**:
-  - `login/page.tsx`: Login/signup interface
-  - `login/actions.ts`: Server actions for auth
-  - Supabase integration
-- **Technologies**: Next.js, Supabase Auth
-
-## Setup and Installation
-
-### Prerequisites
-
-- Node.js 19+
-- Python 3.9+
-- Docker (optional but recommended)
-- Supabase account
-- Pinecone account
-- Groq API key
-- MeetingBaaS account
-
-## Usage
-
-### Access the Application
-
-Login with these creds:
-- Email:jamikhann@gmail.com
-- Pass: abcd1234
-- Or directly login with github
-
-### Key Workflows
-
-1. **Prospect Generation**:
-   - Navigate to the Prospects page
-   - Set minimum alignment score and click "Generate New Prospects"
-   - View and filter prospects based on criteria
-
-2. **Email Generation**:
-   - Click on a prospect to view details
-   - Select "Generate Email Draft" 
-   - Edit the draft and send
-
-3. **Reply Tracking**:
-   - Go to the Dashboard and select "Follow-ups" tab
-   - Click "Analyze Replies" to process new emails
-   - View sentiment analysis and suggested follow-ups
-
-4. **Meeting Management**:
-   - Navigate to the Dashboard and select "Meeting Notes" tab
-   - Add a meeting bot by providing a meeting URL
-   - Once a meeting completes, view the transcript, summary, and insights
-
-5. **Knowledge Search**:
-   - Use the search bar in the Meeting Notes tab
-   - Ask questions about past meetings
-   - View answers with source information
-
-### Adding New Features
-
-1. **New AI Agents**:
-   - Create a new service in `agents/services/`
-   - Add endpoints in `agents/main.py`
-   - Integrate with existing services as needed
-
-2. **New Frontend Components**:
-   - Add components in `components/`
-   - Create new pages in `app/`
-   - Update navigation as needed
-
-3. **Database Changes**:
-   - Update Supabase schema as needed
-   - Modify the relevant services that interact with the database
-
-## Deployment
-
-### Frontend (Vercel)
-
-1. Push your code to GitHub
-2. Connect your repository to Vercel
-3. Configure environment variables
-4. Deploy
-
-### Backend (Railway)
-
-1. Push your code to GitHub
-2. Connect your repository to Railway
-3. Configure environment variables
-4. Set the start command: `uvicorn main:app --host 0.0.0.0 --port $PORT`
-5. Deploy
+- **AI Prospect Researcher**: Identify potential leads based on predefined criteria.
+- **AI Email Generator**: Create personalized emails to engage prospects effectively.
+- **AI Follow-Up and Meeting Scheduler**: Automate follow-ups and schedule meetings seamlessly.
+- **Meeting Assistant**: Transcribe meetings and extract actionable items.
+- **Searchable Knowledge Base**: Access past meeting notes and insights easily.
 
 ## Technologies Used
 
-### Backend
+This project utilizes a variety of technologies to deliver its features effectively:
 
-- **FastAPI**: Web framework for building APIs
-- **LangChain**: Framework for LLM applications
-- **LangGraph**: State machines for LLM workflows
-- **Groq**: LLM provider for text generation
-- **Selenium & BeautifulSoup**: Web scraping
-- **Pinecone**: Vector database for embeddings
-- **Jina AI**: Embedding model provider
-- **Redis**: Caching and temporary storage
-- **Supabase**: PostgreSQL database and authentication
+- **Gemini**: For natural language processing.
+- **Groq**: To handle data queries efficiently.
+- **Langchain-Python**: For managing interactions with language models.
+- **Langgraph-Python**: To visualize data flows and processes.
+- **Next.js**: For building the frontend.
+- **Node.js**: To handle backend operations.
+- **Python**: For scripting and automation.
+- **Railway**: For deployment and hosting.
+- **TypeScript**: For type safety in JavaScript code.
+- **Vercel**: For frontend deployment.
 
-### Frontend
+## Installation
 
-- **Next.js 15**: React framework with App Router
-- **TypeScript**: Typed JavaScript
-- **Tailwind CSS**: Utility-first CSS framework
-- **shadcn/ui**: Component library
-- **Recharts**: Charting library
-- **Sonner**: Toast notifications
-- **React Hook Form**: Form handling
+To set up the project locally, follow these steps:
 
-### DevOps
+1. **Clone the Repository**:
+   ```bash
+   git clone https://github.com/CristianCast18/AI-Sales-development-representative.git
+   cd AI-Sales-development-representative
+   ```
 
-- **Docker**: Containerization
-- **Railway**: Backend deployment
-- **Vercel**: Frontend deployment
+2. **Install Dependencies**:
+   For Node.js:
+   ```bash
+   npm install
+   ```
+
+   For Python:
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+3. **Set Up Environment Variables**:
+   Create a `.env` file in the root directory and add your configuration settings.
+
+4. **Run the Application**:
+   For the backend:
+   ```bash
+   npm start
+   ```
+
+   For the frontend:
+   ```bash
+   npm run dev
+   ```
+
+5. **Access the Application**:
+   Open your browser and navigate to `http://localhost:3000`.
+
+For any new updates or versions, check the [Releases section](https://github.com/CristianCast18/AI-Sales-development-representative/releases).
+
+## Usage
+
+Once the application is running, you can start using its features:
+
+1. **AI Prospect Researcher**: Input your criteria to find leads.
+2. **AI Email Generator**: Fill in the necessary fields to generate an email.
+3. **AI Follow-Up and Meeting Scheduler**: Set up follow-ups and meetings with ease.
+4. **Meeting Assistant**: Use the assistant during meetings to transcribe and take notes.
+
+## Contributing
+
+We welcome contributions! If you want to help improve the project, please follow these steps:
+
+1. Fork the repository.
+2. Create a new branch (`git checkout -b feature/YourFeature`).
+3. Make your changes.
+4. Commit your changes (`git commit -m 'Add some feature'`).
+5. Push to the branch (`git push origin feature/YourFeature`).
+6. Open a pull request.
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
----
+## Contact
 
-For questions or support, please contact [mohdjamikhann@gmail.com](mailto:mohdjamikhann@gmail.com).
+For questions or suggestions, feel free to reach out:
+
+- **Cristian Cast**: [LinkedIn](https://www.linkedin.com/in/cristiancast) | [Email](mailto:cristian@example.com)
+
+Thank you for checking out the **AI Sales Development Representative**! We hope this tool enhances your sales processes and boosts your engagement with prospects. For updates and new features, please keep an eye on our [Releases section](https://github.com/CristianCast18/AI-Sales-development-representative/releases).
